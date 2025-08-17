@@ -1,32 +1,33 @@
-const { DataTypes } = require("sequelize");
-const { sequelize } = require("../../config/db");
+const pool = require("../../config/db");
 
-const User = sequelize.define(
-  "User",
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
-      primaryKey: true,
-    },
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    email: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
-    },
-    password: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-  },
-  {
-    timestamps: true,
-    tableName: "users",
-  }
-);
+// Create table if not exists
+async function initUserTable() {
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS users (
+      id SERIAL PRIMARY KEY,
+      name VARCHAR(100) NOT NULL,
+      email VARCHAR(100) UNIQUE NOT NULL,
+      password VARCHAR(255) NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+}
 
-module.exports = User;
+async function createUser(name, email, password) {
+  const result = await pool.query(
+    "INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING *",
+    [name, email, password]
+  );
+  return result.rows[0];
+}
+
+async function getAllUsers() {
+  const result = await pool.query("SELECT * FROM users");
+  return result.rows;
+}
+
+module.exports = {
+  initUserTable,
+  createUser,
+  getAllUsers,
+};

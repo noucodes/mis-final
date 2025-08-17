@@ -1,19 +1,20 @@
 const express = require("express");
-const cors = require("cors");
-const routes = require("./routes");
+const routes = require("./routes"); // this works because routes is inside src/
+const { initUserTable } = require("./modules/user/user.model");
 
 const app = express();
-
-app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
+// API routes
 app.use("/api", routes);
 
-// Global error handler
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ error: "Something went wrong!" });
-});
+// Initialize DB tables
+initUserTable()
+  .then(() => {
+    console.log("✅ Users table ready");
+  })
+  .catch((err) => {
+    console.error("❌ Error initializing DB:", err);
+  });
 
 module.exports = app;

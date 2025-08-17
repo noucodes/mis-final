@@ -1,9 +1,14 @@
 const User = require("./user.model");
 
-exports.getAllUsers = async () => {
-  return await User.findAll();
-};
+async function createUserService(name, email, password) {
+  return await User.createUser(name, email, password);
+}
 
-exports.createUser = async (data) => {
-  return await User.create(data);
+async function getUsersService() {
+  return await User.getAllUsers();
+}
+
+module.exports = {
+  createUserService,
+  getUsersService,
 };
