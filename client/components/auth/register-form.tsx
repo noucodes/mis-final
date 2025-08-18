@@ -8,12 +8,14 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { toast, Toaster } from "sonner"
 
 export function RegisterForm({
     className,
     ...props
 }: React.ComponentProps<"div">) {
     const [name, setName] = useState("")
+    const [employeeid, setEmployeeId] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [loading, setLoading] = useState(false)
@@ -27,16 +29,16 @@ export function RegisterForm({
         setLoading(true)
 
         try {
-            const res = await axios.post("http://localhost:5000/api/users/register", {
-                name,
-                email,
-                password,
-            })
+            const res = await axios.post(
+                `${process.env.NEXT_PUBLIC_API_URL}/users`,
+                { name, email, password, employeeid },
+                { withCredentials: true } // needed if backend has credentials: true
+            )
 
-            setSuccess("✅ Registered successfully!")
-            console.log(res.data) // You can redirect to login here
+            toast.success("Registered successfully!")
+            console.log(res.data)
         } catch (err: any) {
-            setError(err.response?.data?.error || "❌ Something went wrong")
+            toast.error(err.response?.data?.error || "Something went wrong")
         } finally {
             setLoading(false)
         }
@@ -44,6 +46,7 @@ export function RegisterForm({
 
     return (
         <div className={cn("flex flex-col gap-6", className)} {...props}>
+            <Toaster position="top-right" richColors />
             <form onSubmit={handleSubmit}>
                 <div className="flex flex-col gap-6">
                     <div className="flex flex-col items-center gap-2">
@@ -65,6 +68,16 @@ export function RegisterForm({
                         </div>
                     </div>
                     <div className="flex flex-col gap-6">
+                        <div className="grid gap-3">
+                            <Label htmlFor="employeeid">Employee ID</Label>
+                            <Input
+                                id="employeeid"
+                                type="text"
+                                value={employeeid}
+                                onChange={(e) => setEmployeeId(e.target.value)}
+                                required
+                            />
+                        </div>
                         <div className="grid gap-3">
                             <Label htmlFor="name">Name</Label>
                             <Input

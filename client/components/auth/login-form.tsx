@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { toast, Toaster } from "sonner"
 
 export function LoginForm({
     className,
@@ -23,21 +24,22 @@ export function LoginForm({
         setLoading(true)
 
         try {
-            const res = await axios.post("http://localhost:8080/api/users/login", {
+            const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/users/login`, {
                 email,
                 password,
-            })
+            },
+                { withCredentials: true })
 
             // Save JWT token to localStorage
             localStorage.setItem("token", res.data.token)
 
-            alert("✅ Login successful!")
+            toast.success("Login successful!")
             console.log("User:", res.data.user)
 
             // Redirect to dashboard (example)
             window.location.href = "/dashboard"
         } catch (err: any) {
-            setError(err.response?.data?.error || "Something went wrong")
+            toast.error(err.response?.data?.error || "Something went wrong")
         } finally {
             setLoading(false)
         }
@@ -45,6 +47,7 @@ export function LoginForm({
 
     return (
         <div className={cn("flex flex-col gap-6", className)} {...props}>
+            <Toaster position="top-right" richColors />
             <form onSubmit={handleSubmit}>
                 <div className="flex flex-col gap-6">
                     <div className="flex flex-col items-center gap-2">
@@ -68,10 +71,10 @@ export function LoginForm({
 
                     <div className="flex flex-col gap-6">
                         <div className="grid gap-3">
-                            <Label htmlFor="email">Email</Label>
+                            <Label htmlFor="email">Email or Employee ID</Label>
                             <Input
                                 id="email"
-                                type="email"
+                                type="text"
                                 placeholder="m@example.com"
                                 required
                                 value={email}
