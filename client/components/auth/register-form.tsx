@@ -1,4 +1,8 @@
+"use client"
+
 import { Play } from "lucide-react"
+import { useState } from "react"
+import axios from "axios"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -9,9 +13,38 @@ export function RegisterForm({
     className,
     ...props
 }: React.ComponentProps<"div">) {
+    const [name, setName] = useState("")
+    const [email, setEmail] = useState("")
+    const [password, setPassword] = useState("")
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState("")
+    const [success, setSuccess] = useState("")
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault()
+        setError("")
+        setSuccess("")
+        setLoading(true)
+
+        try {
+            const res = await axios.post("http://localhost:5000/api/users/register", {
+                name,
+                email,
+                password,
+            })
+
+            setSuccess("✅ Registered successfully!")
+            console.log(res.data) // You can redirect to login here
+        } catch (err: any) {
+            setError(err.response?.data?.error || "❌ Something went wrong")
+        } finally {
+            setLoading(false)
+        }
+    }
+
     return (
         <div className={cn("flex flex-col gap-6", className)} {...props}>
-            <form>
+            <form onSubmit={handleSubmit}>
                 <div className="flex flex-col gap-6">
                     <div className="flex flex-col items-center gap-2">
                         <a
@@ -37,7 +70,8 @@ export function RegisterForm({
                             <Input
                                 id="name"
                                 type="text"
-                                placeholder="m@example.com"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
                                 required
                             />
                         </div>
@@ -46,7 +80,8 @@ export function RegisterForm({
                             <Input
                                 id="email"
                                 type="email"
-                                placeholder="m@example.com"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
                                 required
                             />
                         </div>
@@ -55,19 +90,24 @@ export function RegisterForm({
                             <Input
                                 id="password"
                                 type="password"
-                                placeholder="m@example.com"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
                                 required
                             />
                         </div>
-                        <Button type="submit" className="w-full">
-                            Login
+                        <Button type="submit" className="w-full" disabled={loading}>
+                            {loading ? "Registering..." : "Register"}
                         </Button>
+
+                        {error && <p className="text-red-500 text-sm">{error}</p>}
+                        {success && <p className="text-green-500 text-sm">{success}</p>}
                     </div>
                 </div>
             </form>
             <div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4">
-                By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
-                and <a href="#">Privacy Policy</a>.
+                By clicking continue, you agree to our{" "}
+                <a href="#">Terms of Service</a> and{" "}
+                <a href="#">Privacy Policy</a>.
             </div>
         </div>
     )

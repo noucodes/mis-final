@@ -1,5 +1,8 @@
-import { Play } from "lucide-react"
+"use client"
 
+import { useState } from "react"
+import axios from "axios"
+import { Play } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -9,9 +12,40 @@ export function LoginForm({
     className,
     ...props
 }: React.ComponentProps<"div">) {
+    const [email, setEmail] = useState("")
+    const [password, setPassword] = useState("")
+    const [error, setError] = useState("")
+    const [loading, setLoading] = useState(false)
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault()
+        setError("")
+        setLoading(true)
+
+        try {
+            const res = await axios.post("http://localhost:8080/api/users/login", {
+                email,
+                password,
+            })
+
+            // Save JWT token to localStorage
+            localStorage.setItem("token", res.data.token)
+
+            alert("✅ Login successful!")
+            console.log("User:", res.data.user)
+
+            // Redirect to dashboard (example)
+            window.location.href = "/dashboard"
+        } catch (err: any) {
+            setError(err.response?.data?.error || "Something went wrong")
+        } finally {
+            setLoading(false)
+        }
+    }
+
     return (
         <div className={cn("flex flex-col gap-6", className)} {...props}>
-            <form>
+            <form onSubmit={handleSubmit}>
                 <div className="flex flex-col gap-6">
                     <div className="flex flex-col items-center gap-2">
                         <a
@@ -31,6 +65,7 @@ export function LoginForm({
                             </a>
                         </div>
                     </div>
+
                     <div className="flex flex-col gap-6">
                         <div className="grid gap-3">
                             <Label htmlFor="email">Email</Label>
@@ -39,26 +74,35 @@ export function LoginForm({
                                 type="email"
                                 placeholder="m@example.com"
                                 required
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
                             />
                         </div>
+
                         <div className="grid gap-3">
                             <Label htmlFor="password">Password</Label>
                             <Input
                                 id="password"
                                 type="password"
-                                placeholder="m@example.com"
+                                placeholder="••••••••"
                                 required
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
                             />
                         </div>
-                        <Button type="submit" className="w-full">
-                            Login
+
+                        {error && <p className="text-red-500 text-sm">{error}</p>}
+
+                        <Button type="submit" className="w-full" disabled={loading}>
+                            {loading ? "Logging in..." : "Login"}
                         </Button>
                     </div>
                 </div>
             </form>
+
             <div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4">
-                By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
-                and <a href="#">Privacy Policy</a>.
+                By clicking continue, you agree to our{" "}
+                <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
             </div>
         </div>
     )
