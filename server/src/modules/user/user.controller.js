@@ -114,7 +114,7 @@ exports.loginUser = async (req, res) => {
 
     // Generate JWT
     const token = jwt.sign(
-      { id: user.id, role: user.role },
+      { id: user.id, role: user.role, email: user.email, name: user.name  },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
@@ -125,3 +125,10 @@ exports.loginUser = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
+
+exports.getUser = async (req, res) => {
+  const result = await pool.query(
+      "SELECT * FROM users WHERE email = $1 OR employee_id = $1",
+      [email]
+    );
+}

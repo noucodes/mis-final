@@ -12,7 +12,7 @@ function authMiddleware(req, res, next) {
     req.user = decoded; // attach user payload to request
     next();
   } catch (err) {
-    return res.status(401).json({ message: "Invalid token" });
+    return res.status(401).json({ message: "Invalid token or Expired Token" });
   }
 }
 
