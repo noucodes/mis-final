@@ -13,6 +13,7 @@ router.get("/dashboard", authMiddleware, (req, res) => {
 router.get("/me", authMiddleware, (req, res) => {
   res.json({
     id: req.user.id,
+    employeeid: req.user.employeeid,
     name: req.user.name,
     email: req.user.email,
     role: req.user.role,

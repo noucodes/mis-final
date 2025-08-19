@@ -44,7 +44,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const token = localStorage.getItem("token"); // 👈 from login
+        const token = localStorage.getItem("token");
         if (!token) return;
 
         const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/me`, {
@@ -68,7 +68,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               {user ? (
-                <a href="#">
+                <a href="/dashboard">
                   <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
                     <Play className="size-4" />
                   </div>
