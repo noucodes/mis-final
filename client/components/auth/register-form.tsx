@@ -1,6 +1,6 @@
 "use client";
 
-import { Play } from "lucide-react";
+import { Phone, Play, User } from "lucide-react";
 import { useState } from "react";
 import axios from "axios";
 
@@ -73,8 +73,10 @@ export function RegisterForm({
               href="#"
               className="flex flex-col items-center gap-2 font-medium"
             >
-              <div className="flex size-8 items-center justify-center rounded-md">
-                <Play className="size-6" />
+              <div className="flex items-center justify-center rounded-md">
+                <Play className="size-12" />
+                <User className="size-12" />
+                <Phone className="size-12" />
               </div>
               <span className="sr-only">AdonPH</span>
             </a>

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import axios from "axios";
-import { Play } from "lucide-react";
+import { Phone, Play, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -40,7 +40,6 @@ export function LoginForm({
       toast.success("Login successful!");
       console.log("User:", res.data.user);
 
-      // Redirect to dashboard (example)
       window.location.href = "/dashboard";
     } catch (err: any) {
       toast.error(err.response?.data?.error || "Something went wrong");
@@ -59,8 +58,10 @@ export function LoginForm({
               href="#"
               className="flex flex-col items-center gap-2 font-medium"
             >
-              <div className="flex size-8 items-center justify-center rounded-md">
-                <Play className="size-6" />
+              <div className="flex items-center justify-center rounded-md">
+                <Play className="size-12" />
+                <User className="size-12" />
+                <Phone className="size-12" />
               </div>
               <span className="sr-only">AdonPH</span>
             </a>
