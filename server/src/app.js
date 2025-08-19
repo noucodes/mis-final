@@ -1,6 +1,6 @@
 const express = require("express");
 const routes = require("./routes"); // this works because routes is inside src/
-const { initUserTable } = require("./modules/user/user.model");
+const { initUserTable } = require("./modules/users/models/user.model");
 const cors = require("cors");
 
 const app = express();

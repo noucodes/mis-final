@@ -14,7 +14,7 @@ export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const [email, setEmail] = useState("");
+  const [emailOrId, setEmailOrId] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -28,7 +28,7 @@ export function LoginForm({
       const res = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/users/login`,
         {
-          email,
+          emailOrId,
           password,
         },
         { withCredentials: true }
@@ -76,14 +76,14 @@ export function LoginForm({
 
           <div className="flex flex-col gap-6">
             <div className="grid gap-3">
-              <Label htmlFor="email">Email or Employee ID</Label>
+              <Label htmlFor="emailOrId">Email or Employee ID</Label>
               <Input
-                id="email"
+                id="emailOrId"
                 type="text"
                 placeholder="m@example.com"
                 required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={emailOrId}
+                onChange={(e) => setEmailOrId(e.target.value)}
               />
             </div>
 

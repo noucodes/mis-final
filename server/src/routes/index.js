@@ -1,13 +1,21 @@
 const express = require("express");
 const router = express.Router();
-const userRoutes = require("../modules/user/user.routes");
+const userRoutes = require("../modules/users/routes/user.routes");
+const personalInfoRoutes = require("../modules/personal_info/routes/personalInfo.routes");
 const authMiddleware = require("../middlewares/auth");
 
 router.use("/users", userRoutes);
 
-// Example protected route
+// Mount personal info routes
+router.use("/personal-info", personalInfoRoutes); // New route mounting
+
+// Protected dashboard route
 router.get("/dashboard", authMiddleware, (req, res) => {
-  res.json({ message: `Welcome to your dashboard, ${req.user.email}` });
+  try {
+    res.json({ message: `Welcome to your dashboard, ${req.user.email}` });
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
 router.get("/me", authMiddleware, (req, res) => {
