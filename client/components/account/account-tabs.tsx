@@ -1,12 +1,43 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import axios from "axios";
 
-export function AccountTabs() {
+interface PersonalInfo {
+  id: number;
+  active: string;
+  birth_date: string;
+  address: string;
+  phone_number: string;
+  emergency_contact_person: string;
+  emergency_contact_number: string;
+}
+
+export function AccountTabs({ id }: { id: number }) {
+  const [personalInfo, setPersonalInfo] = useState<PersonalInfo | null>(null);
+  useEffect(() => {
+    const fetchPersonalInfo = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) return;
+
+        const respersonal = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/personal-info/${id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        setPersonalInfo(respersonal.data);
+        console.log("Connected to Personal Info Database Table")
+      } catch (err) {
+        console.error("Failed to fetch user", err);
+      }
+    };
+
+    fetchPersonalInfo();
+  }, []);
   return (
     <main className="flex-1 overflow-auto p-6">
       <Tabs defaultValue="personal" className="w-full">
@@ -23,30 +54,39 @@ export function AccountTabs() {
               <CardTitle>Personal Information</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
+              <div className="grid grid-cols-4 gap-4">
+                <div className="space-y-2 col-span-3">
+                  <Label htmlFor="address">Address</Label>
+                  <Input
+                    id="address"
+                    placeholder="123 Main St, City, State 12345"
+                    value={personalInfo?.address}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="birthdate">Date of Birth</Label>
+                  <Input id="birthdate" type="date" placeholder="1990-01-15" value={personalInfo?.birth_date} />
+                </div>
+              </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="firstName">First Name</Label>
-                  <Input id="firstName" defaultValue="John" />
+                  <Label htmlFor="active">Active</Label>
+                  <Input id="active" placeholder="Active" value={personalInfo?.active} />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="lastName">Last Name</Label>
-                  <Input id="lastName" defaultValue="Doe" />
+                  <Label htmlFor="phone_number">Phone Number</Label>
+                  <Input id="phone_number" placeholder="+1 (555) 123-4567" value={personalInfo?.phone_number} />
                 </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number</Label>
-                <Input id="phone" defaultValue="+1 (555) 123-4567" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="address">Address</Label>
-                <Input
-                  id="address"
-                  defaultValue="123 Main St, City, State 12345"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="birthdate">Date of Birth</Label>
-                <Input id="birthdate" type="date" defaultValue="1990-01-15" />
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="emergency_contact_number">Emergency Contact Number</Label>
+                  <Input id="emergency_contact_number" placeholder="+64 9876543210" value={personalInfo?.emergency_contact_number} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="emergency_contact_person">Emergency Contact Person</Label>
+                  <Input id="emergency_contact_person" placeholder="John Doe" value={personalInfo?.emergency_contact_person} />
+                </div>
               </div>
             </CardContent>
           </Card>

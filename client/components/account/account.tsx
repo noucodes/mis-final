@@ -21,7 +21,7 @@ export function Account() {
     email: string;
     avatar?: string;
     role: string;
-    employeeid: string;
+    employeeId: string;
     password?: string;
   } | null>(null);
 
@@ -44,11 +44,11 @@ export function Account() {
         const token = localStorage.getItem("token");
         if (!token) return;
 
-        const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/me`, {
+        const resuser = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        setUser(res.data);
+        setUser(resuser.data);
       } catch (err) {
         console.error("Failed to fetch user", err);
       }
@@ -94,7 +94,7 @@ export function Account() {
               <div className="flex items-center space-x-6 text-sm">
                 <div className="flex items-center space-x-2">
                   <Label className="text-muted-foreground">ID:</Label>
-                  <span className="font-medium">{user.employeeid}</span>
+                  <span className="font-medium">{user.employeeId}</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Label className="text-muted-foreground">Email:</Label>
@@ -124,11 +124,11 @@ export function Account() {
                     <Label htmlFor="modal-id">Employee Id</Label>
                     <Input
                       id="modal-id"
-                      value={tempData.employeeid}
+                      value={tempData.employeeId}
                       onChange={(e) =>
                         setTempData(
                           (prev) =>
-                            prev && { ...prev, employeeid: e.target.value }
+                            prev && { ...prev, employeeId: e.target.value }
                         )
                       }
                     />
@@ -191,7 +191,7 @@ export function Account() {
           </Dialog>
         </div>
       </header>
-      <AccountTabs />
+      <AccountTabs id={user.id} />
     </>
   );
 }

@@ -1,11 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const personalInfoController = require("../controllers/personalInfo.controller");
+const authMiddleware = require("../../../middlewares/auth");
 
-router.post("/personal-info", personalInfoController.createPersonalInfo);
-router.get("/personal-info", personalInfoController.getAllPersonalInfo);
-router.get("/personal-info/:id", personalInfoController.getPersonalInfoById);
-router.put("/personal-info/:id", personalInfoController.updatePersonalInfo);
-router.delete("/personal-info/:id", personalInfoController.deletePersonalInfo);
+router.post("/", personalInfoController.createPersonalInfo);
+router.get("/", personalInfoController.getAllPersonalInfo);
+router.get("/:id", personalInfoController.getPersonalInfoById);
+router.put("/:id", personalInfoController.updatePersonalInfo);
+router.delete("/:id", personalInfoController.deletePersonalInfo);
 
 module.exports = router;

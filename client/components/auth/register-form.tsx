@@ -16,7 +16,7 @@ export function RegisterForm({
   ...props
 }: React.ComponentProps<"div">) {
   const [name, setName] = useState("");
-  const [employeeid, setEmployeeId] = useState("");
+  const [employeeId, setEmployeeId] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -45,7 +45,7 @@ export function RegisterForm({
     try {
       const res = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/users`,
-        { name, email, password, employeeid },
+        { name, email, password, employeeId },
         { withCredentials: true }
       );
 
@@ -94,7 +94,7 @@ export function RegisterForm({
               <Input
                 id="employeeid"
                 type="text"
-                value={employeeid}
+                value={employeeId}
                 onChange={(e) => setEmployeeId(e.target.value)}
                 required
               />
