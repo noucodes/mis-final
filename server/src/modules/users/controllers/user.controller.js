@@ -19,3 +19,13 @@ exports.loginUser = async (req, res) => {
     res.status(error.status || 500).json({ error: error.message });
   }
 };
+
+exports.getUser = async (req, res) => {
+  try {
+    const data = req.params.id;
+    const { message, token, user } = await userService.getUserService(data);
+    res.status(200).json({ message, token, user });
+  } catch (error) {
+    res.status(error.status || 500).json({ error: error.message });
+  }
+};
