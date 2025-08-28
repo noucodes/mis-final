@@ -44,7 +44,7 @@ export function RegisterForm({
     setLoading(true);
     try {
       const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/users`,
+        `${process.env.NEXT_PUBLIC_API_URL}/users/register`,
         { name, email, password, employeeId },
         { withCredentials: true }
       );

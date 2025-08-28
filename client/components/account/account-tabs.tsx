@@ -1,43 +1,118 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useRouter } from "next/navigation";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import axios from "axios";
+import { Button } from "@/components/ui/button";
+import { Save } from "lucide-react";
+import axios, { AxiosError } from "axios";
+import { toast } from "sonner";
 
+// Interface aligned with backend schema
 interface PersonalInfo {
   id: number;
-  active: string;
+  active: boolean;
   birth_date: string;
-  address: string;
-  phone_number: string;
-  emergency_contact_person: string;
-  emergency_contact_number: string;
+  address?: string;
+  phone_number?: string;
+  emergency_contact_person?: string;
+  emergency_contact_number?: string;
+  user_id: number;
 }
 
 export function AccountTabs({ id }: { id: number }) {
-  const [personalInfo, setPersonalInfo] = useState<PersonalInfo | null>(null);
+  const router = useRouter();
+  const [personalInfo, setPersonalInfo] = useState<PersonalInfo>({
+    id: 0,
+    active: true,
+    birth_date: "",
+    address: "",
+    phone_number: "",
+    emergency_contact_person: "",
+    emergency_contact_number: "",
+    user_id: id,
+  });
+  const [loading, setLoading] = useState<boolean>(true);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Check authentication and fetch data on mount
   useEffect(() => {
-    const fetchPersonalInfo = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) return;
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.push("/login");
+    } else {
+      setIsAuthenticated(true);
+      fetchPersonalInfo(token);
+    }
+  }, [router]);
 
-        const respersonal = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/personal-info/${id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+  // Fetch personal info
+  const fetchPersonalInfo = async (token: string) => {
+    try {
+      const response = await axios.get<PersonalInfo>(
+        `${process.env.NEXT_PUBLIC_API_URL}/personal-info/${id}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setPersonalInfo(response.data);
+    } catch (err) {
+      const error = err as AxiosError<{ message: string }>;
+      console.error("Fetch error:", error);
+      toast.info("No personal info found, please fill out the form");
+      // Keep default state
+    } finally {
+      setLoading(false);
+    }
+  };
 
-        setPersonalInfo(respersonal.data);
-        console.log("Connected to Personal Info Database Table")
-      } catch (err) {
-        console.error("Failed to fetch user", err);
+  // Handle input changes
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setPersonalInfo((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // Handle form submission
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    if (!personalInfo.birth_date) {
+      setError("Birth date is required.");
+      toast.error("Birth date is required.");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("No token found. Please log in.");
       }
-    };
 
-    fetchPersonalInfo();
-  }, []);
+      const response = await axios.put<PersonalInfo>(
+        `${process.env.NEXT_PUBLIC_API_URL}/personal-info/${id}`,
+        { ...personalInfo, user_id: id },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      toast.success("Personal info updated successfully!");
+      setPersonalInfo(response.data);
+    } catch (err) {
+      const error = err as AxiosError<{ message: string }>;
+      console.error("Error:", error);
+      const errorMessage = error || "Failed to update info.";
+      setError(`${errorMessage}`);
+      toast.error(`${errorMessage}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
   return (
     <main className="flex-1 overflow-auto p-6">
       <Tabs defaultValue="personal" className="w-full">
@@ -54,45 +129,88 @@ export function AccountTabs({ id }: { id: number }) {
               <CardTitle>Personal Information</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-4 gap-4">
-                <div className="space-y-2 col-span-3">
-                  <Label htmlFor="address">Address</Label>
-                  <Input
-                    id="address"
-                    placeholder="123 Main St, City, State 12345"
-                    value={personalInfo?.address}
-                  />
+              {error && <p className="text-red-500">{error}</p>}
+              <form onSubmit={handleSubmit}>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="birth_date">Date of Birth</Label>
+                    <Input
+                      id="birth_date"
+                      name="birth_date"
+                      type="date"
+                      placeholder="1990-01-15"
+                      value={personalInfo.birth_date}
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="address">Address</Label>
+                    <Input
+                      id="address"
+                      name="address"
+                      placeholder="123 Main St, City, State 12345"
+                      value={personalInfo.address || ""}
+                      onChange={handleChange}
+                    />
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="birthdate">Date of Birth</Label>
-                  <Input id="birthdate" type="date" placeholder="1990-01-15" value={personalInfo?.birth_date} />
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="phone_number">Phone Number</Label>
+                    <Input
+                      id="phone_number"
+                      name="phone_number"
+                      placeholder="+1 (555) 123-4567"
+                      value={personalInfo.phone_number || ""}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="emergency_contact_person">Emergency Contact Person</Label>
+                    <Input
+                      id="emergency_contact_person"
+                      name="emergency_contact_person"
+                      placeholder="Jane Doe"
+                      value={personalInfo.emergency_contact_person || ""}
+                      onChange={handleChange}
+                    />
+                  </div>
                 </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="active">Active</Label>
-                  <Input id="active" placeholder="Active" value={personalInfo?.active} />
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="emergency_contact_number">Emergency Contact Number</Label>
+                    <Input
+                      id="emergency_contact_number"
+                      name="emergency_contact_number"
+                      placeholder="+64 9876543210"
+                      value={personalInfo.emergency_contact_number || ""}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="active">Active</Label>
+                    <Input
+                      id="active"
+                      name="active"
+                      placeholder="Active"
+                      value={personalInfo.active ? "Yes" : "No"}
+                      disabled
+                    />
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="phone_number">Phone Number</Label>
-                  <Input id="phone_number" placeholder="+1 (555) 123-4567" value={personalInfo?.phone_number} />
+                <div className="w-full flex justify-center mt-4">
+                  <Button type="submit" className="w-full" disabled={loading}>
+                    <Save className="mr-2 h-4 w-4" />
+                    {loading ? "Saving..." : "Next"}
+                  </Button>
                 </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="emergency_contact_number">Emergency Contact Number</Label>
-                  <Input id="emergency_contact_number" placeholder="+64 9876543210" value={personalInfo?.emergency_contact_number} />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="emergency_contact_person">Emergency Contact Person</Label>
-                  <Input id="emergency_contact_person" placeholder="John Doe" value={personalInfo?.emergency_contact_person} />
-                </div>
-              </div>
+              </form>
             </CardContent>
           </Card>
         </TabsContent>
 
-        {/* EMPLOYEE INFO */}
+        {/* EMPLOYEE INFO (Placeholder) */}
         <TabsContent value="employee" className="mt-6">
           <Card>
             <CardHeader>
@@ -131,7 +249,7 @@ export function AccountTabs({ id }: { id: number }) {
           </Card>
         </TabsContent>
 
-        {/* CONTRIBUTION */}
+        {/* CONTRIBUTION (Placeholder) */}
         <TabsContent value="contribution" className="mt-6">
           <Card>
             <CardHeader>
@@ -160,16 +278,10 @@ export function AccountTabs({ id }: { id: number }) {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="stockOptions">Stock Options</Label>
-                <Input
-                  id="stockOptions"
-                  defaultValue="1,000 shares vested"
-                  readOnly
-                />
+                <Input id="stockOptions" defaultValue="1,000 shares vested" readOnly />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="performanceBonus">
-                  Performance Bonus (YTD)
-                </Label>
+                <Label htmlFor="performanceBonus">Performance Bonus (YTD)</Label>
                 <Input id="performanceBonus" defaultValue="$5,000" readOnly />
               </div>
             </CardContent>

@@ -2,17 +2,7 @@
 
 import * as React from "react";
 import {
-  AudioWaveform,
-  BookOpen,
-  Bot,
-  Command,
-  Frame,
-  GalleryVerticalEnd,
-  Map,
-  PieChart,
-  Play,
-  Settings2,
-  SquareTerminal,
+  Play
 } from "lucide-react";
 
 import { NavMain } from "@/components/sidebar/nav-main";
@@ -32,6 +22,8 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { roleLabels } from "@/lib/roleLabels";
 import { Skeleton } from "../ui/skeleton";
+import { toast, Toaster } from "sonner";
+import router from "next/router";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [user, setUser] = useState<{
@@ -40,22 +32,33 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     avatar?: string;
     role: string;
   } | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+
+  // Handle logout on token expiration
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setIsAuthenticated(false);
+    toast.error("Session expired, please log in again");
+    router.push("/login");
+  };
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
         const token = localStorage.getItem("token");
-        if (!token) return;
-
+        if (!token) { setIsAuthenticated(false); }
+        setIsAuthenticated(true);
         const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/me`, {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `bearer ${token}`,
           },
         });
 
-        setUser(res.data); // { id, name, email, role }
+        setUser(res.data);
+        setIsAuthenticated(true); // { id, name, email, role }
       } catch (err) {
         console.error("Failed to fetch user", err);
+        handleLogout();
       }
     };
 
@@ -63,6 +66,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   }, []);
   return (
     <Sidebar collapsible="icon" {...props}>
+      <Toaster />
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>

@@ -4,31 +4,27 @@ class PersonalInfoService {
   async createPersonalInfo(data) {
     try {
       const {
-        name,
-        department,
-        approver,
         active,
-        employee_status,
         birth_date,
         address,
         phone_number,
         emergency_contact_person,
         emergency_contact_number,
+        user_id,
       } = data;
       const result = await pool.query(
-        `INSERT INTO personal_info (name, department, approver, active, employee_status, birth_date, address, phone_number, emergency_contact_person, emergency_contact_number) 
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *`,
+        `INSERT INTO personal_info (
+          active, birth_date, address, phone_number, emergency_contact_person, emergency_contact_number, user_id
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7) 
+        RETURNING *`,
         [
-          name,
-          department,
-          approver,
           active,
-          employee_status,
           birth_date,
           address,
           phone_number,
           emergency_contact_person,
           emergency_contact_number,
+          user_id,
         ]
       );
       return result.rows[0];
@@ -48,24 +44,26 @@ class PersonalInfoService {
     }
   }
 
-  async getPersonalInfoById(id) {
+  async getPersonalInfoById(user_id) {
     try {
-      const result = await pool.query("SELECT * FROM personal_info WHERE id = $1", [id]);
+      const result = await pool.query(
+        "SELECT * FROM personal_info WHERE user_id = $1",
+        [user_id]
+      );
       return result.rows[0];
     } catch (error) {
-      console.error("Error in service fetching personal_info by id:", error);
+      console.error(
+        "Error in service fetching personal_info by user_id:",
+        error
+      );
       throw error;
     }
   }
 
-  async updatePersonalInfo(id, data) {
+  async updatePersonalInfo(user_id, data) {
     try {
       const {
-        name,
-        department,
-        approver,
         active,
-        employee_status,
         birth_date,
         address,
         phone_number,
@@ -73,23 +71,28 @@ class PersonalInfoService {
         emergency_contact_number,
       } = data;
       const result = await pool.query(
-        `UPDATE personal_info 
-         SET name = $1, department = $2, approver = $3, active = $4, employee_status = $5, 
-             birth_date = $6, address = $7, phone_number = $8, emergency_contact_person = $9, 
-             emergency_contact_number = $10 
-         WHERE id = $11 RETURNING *`,
+        `INSERT INTO personal_info (
+          user_id, active, birth_date, 
+          address, phone_number, emergency_contact_person, emergency_contact_number
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7)
+        ON CONFLICT (user_id)
+        DO UPDATE SET
+          active = EXCLUDED.active,
+          birth_date = EXCLUDED.birth_date,
+          address = EXCLUDED.address,
+          phone_number = EXCLUDED.phone_number,
+          emergency_contact_person = EXCLUDED.emergency_contact_person,
+          emergency_contact_number = EXCLUDED.emergency_contact_number,
+          updated_at = CURRENT_TIMESTAMP
+        RETURNING *`,
         [
-          name,
-          department,
-          approver,
+          user_id,
           active,
-          employee_status,
           birth_date,
           address,
           phone_number,
           emergency_contact_person,
           emergency_contact_number,
-          id,
         ]
       );
       return result.rows[0];
@@ -99,9 +102,12 @@ class PersonalInfoService {
     }
   }
 
-  async deletePersonalInfo(id) {
+  async deletePersonalInfo(user_id) {
     try {
-      const result = await pool.query("DELETE FROM personal_info WHERE id = $1 RETURNING *", [id]);
+      const result = await pool.query(
+        "DELETE FROM personal_info WHERE user_id = $1 RETURNING *",
+        [user_id]
+      );
       return result.rows[0];
     } catch (error) {
       console.error("Error in service deleting personal_info:", error);
