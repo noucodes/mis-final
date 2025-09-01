@@ -1,4 +1,4 @@
-import { SquareTerminal, Bot, BookOpen, Settings2 } from "lucide-react";
+import { SquareTerminal, Bot, BookOpen, Settings2, LayoutDashboard, IdCardLanyard, ClipboardList, CircleAlert, FileWarning, GitPullRequest, FilePenLine, Spotlight } from "lucide-react";
 
 export const navMainData = [
         {
@@ -88,16 +88,19 @@ export const navMainData = [
         },
     ];
 
-    export const HRData = [
+    export const HRData = {
+    label:"Human Resource Management",
+    items: [
+
         { /**walaa ang dropdown boi! */
             title: "Dashboard",
             url: "#",
-            icon: SquareTerminal,
+            icon: LayoutDashboard,
         },
         {
             title: "Employee Management",
             url: "#",
-            icon: Bot,
+            icon: IdCardLanyard,
             items: [
                 {
                     title: "List of Employees",
@@ -116,7 +119,7 @@ export const navMainData = [
         { /**walaa ang dropdown boi! */
             title: "Masterlist of Timesheet",
             url: "#",
-            icon: BookOpen,
+            icon: ClipboardList,
             items: [
                 {
                     title: "Introduction",
@@ -140,25 +143,25 @@ export const navMainData = [
     { /**walaa ang dropdown boi! */
                 title: "Policies",
                 url: "#",
-                icon: BookOpen,
+                icon: CircleAlert,
             },
 
             { /**walaa ang dropdown boi! */
                 title: "HMOs",
                 url: "#",
-                icon: BookOpen,
+                icon: FileWarning,
             },
 
             { /**walaa ang dropdown boi! */
                 title: "COE Request",
                 url: "#",
-                icon: BookOpen,
+                icon: GitPullRequest,
             },
 
             { /**walaa ang dropdown boi! */
             title: "Leave Management",
             url: "#",
-            icon: BookOpen,
+            icon: FilePenLine,
             items: [
                 {
                     title: "Employee Leave Credits",
@@ -174,7 +177,7 @@ export const navMainData = [
          { /**walaa ang dropdown boi! */
             title: "Performance Review",
             url: "#",
-            icon: BookOpen,
+            icon: Spotlight,
             items: [
                 {
                     title: "Employee Evaluations",
@@ -187,12 +190,105 @@ export const navMainData = [
             ],
         },
     
-    ];
+    ]};
+
+    export const HRecruitmentData = {
+    label:"Human Resource Management",
+    items: [
+
+        {
+            title: "Online Applicants /Walk-In Applicants",
+            url: "#",
+            icon: IdCardLanyard,
+            items: [
+                {
+                    title: "Initial Interview",
+                    url: "#",
+                },
+                {   
+                    title: "Examination",
+                    url: "#",
+                },
+                {
+                    title: "Final Interview",
+                    url: "#",
+                },
+                 {
+                    title: "Job Offer",
+                    url: "#",
+                },
+                 {
+                    title: "Contract Signing",
+                    url: "#",
+                },
+                
+            ],
+        },
 
 
+         {
+            title: "Calendar",
+            url: "#",
+            icon: IdCardLanyard,
+        },
+        {
+            title: "Scheduling",
+            url: "#",
+            icon: IdCardLanyard,
+        },
 
+         {
+            title: "On Boarding Process",
+            url: "#",
+            icon: IdCardLanyard,
+            items: [
+                {
+                    title: "Orientation",
+                    url: "#",
+                },
+                {   
+                    title: "Google Account Creation",
+                    url: "#",
+                },
+                {
+                    title: "Time Doctor",
+                    url: "#",
+                },
+                 {
+                    title: "Documents / Requirements",
+                    url: "#",
+                },
+                 {
+                    title: "Asset Assignment",
+                    url: "#",
+                },
+                
+            ],
 
+            
+        },
 
+            {
+            title: "Off Boarding Process",
+            url: "#",
+            icon: IdCardLanyard,
+            items: [
+                {
+                    title: "Resignation Letter",
+                    url: "#",
+                },
+                {   
+                    title: "Clearance",
+                    url: "#",
+                },
+                {
+                    title: "Exit Interview",
+                    url: "#",
+                },  
+            ],
+        },
+    
+    ]};
 
     export const FinanceData = [
         {
