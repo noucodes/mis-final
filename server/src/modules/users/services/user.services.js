@@ -136,9 +136,10 @@ class UserServices {
     }
   }
 
-  async getUsersService() {
+  async getUserService(data) {
     try {
-      const result = await pool.query("SELECT * FROM users");
+      const id = data;
+      const result = await pool.query("SELECT * FROM users WHERE id = $1",[id]);
       return result.rows;
     } catch (err) {
       console.error("❌ Error in getUsersService:", err.message);
