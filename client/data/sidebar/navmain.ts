@@ -8,7 +8,7 @@ export const navMainData = [
             isActive: true,
             items: [
                 {
-                    title: "History",
+                    title: "Dashboard",
                     url: "#",
                 },
                 {
@@ -89,47 +89,32 @@ export const navMainData = [
     ];
 
     export const HRData = [
-        {
-            title: "Playground",
+        { /**walaa ang dropdown boi! */
+            title: "Dashboard",
             url: "#",
             icon: SquareTerminal,
-            isActive: true,
-            items: [
-                {
-                    title: "History",
-                    url: "#",
-                },
-                {
-                    title: "Starred",
-                    url: "#",
-                },
-                {
-                    title: "Settings",
-                    url: "#",
-                },
-            ],
         },
         {
-            title: "Models",
+            title: "Employee Management",
             url: "#",
             icon: Bot,
             items: [
                 {
-                    title: "Genesis",
+                    title: "List of Employees",
+                    url: "#",
+                },
+                {   /**butangi nig dropdown boi! */
+                    title: "Add/Edit Employee Info",
                     url: "#",
                 },
                 {
-                    title: "Explorer",
-                    url: "#",
-                },
-                {
-                    title: "Quantum",
+                    title: "Employment Status History",
                     url: "#",
                 },
             ],
         },
-        {
-            title: "Documentation",
+        { /**walaa ang dropdown boi! */
+            title: "Masterlist of Timesheet",
             url: "#",
             icon: BookOpen,
             items: [
@@ -151,30 +136,63 @@ export const navMainData = [
                 },
             ],
         },
-        {
-            title: "Settings",
+
+    { /**walaa ang dropdown boi! */
+                title: "Policies",
+                url: "#",
+                icon: BookOpen,
+            },
+
+            { /**walaa ang dropdown boi! */
+                title: "HMOs",
+                url: "#",
+                icon: BookOpen,
+            },
+
+            { /**walaa ang dropdown boi! */
+                title: "COE Request",
+                url: "#",
+                icon: BookOpen,
+            },
+
+            { /**walaa ang dropdown boi! */
+            title: "Leave Management",
             url: "#",
-            icon: Settings2,
+            icon: BookOpen,
             items: [
                 {
-                    title: "General",
+                    title: "Employee Leave Credits",
                     url: "#",
                 },
                 {
-                    title: "Team",
-                    url: "#",
-                },
-                {
-                    title: "Billing",
-                    url: "#",
-                },
-                {
-                    title: "Limits",
+                    title: "Approve/Decline Leave",
                     url: "#",
                 },
             ],
         },
+
+         { /**walaa ang dropdown boi! */
+            title: "Performance Review",
+            url: "#",
+            icon: BookOpen,
+            items: [
+                {
+                    title: "Employee Evaluations",
+                    url: "#",
+                },
+                {
+                    title: "Review Templates",
+                    url: "#",
+                },
+            ],
+        },
+    
     ];
+
+
+
+
+
 
     export const FinanceData = [
         {
