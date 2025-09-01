@@ -99,7 +99,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
           {user && user.role ? (
     <NavMain
-      items={
+      data={
         user.role === 'hr'
           ? HRData
           : user.role === 'finance'
