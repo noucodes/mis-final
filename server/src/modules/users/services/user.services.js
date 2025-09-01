@@ -38,6 +38,12 @@ class UserServices {
         [name, email, hashedPassword, role, employeeId]
       );
 
+      const user_id = result.rows[0].id;
+      await pool.query(
+        "INSERT INTO personal_info (user_id, active) VALUES ($1, $2)",
+        [user_id, true]
+      );
+
       return { message: "✅ Registered successfully", user: result.rows[0] };
     } catch (err) {
       console.error("❌ Error in createUserService:", err.message);
@@ -69,7 +75,9 @@ class UserServices {
       // Check if temporarily locked
       if (user.locked_until && new Date(user.locked_until) > new Date()) {
         throw new Error(
-          `Account locked. Try again after ${new Date(user.locked_until).toLocaleTimeString()}`
+          `Account locked. Try again after ${new Date(
+            user.locked_until
+          ).toLocaleTimeString()}`
         );
       }
 

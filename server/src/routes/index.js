@@ -3,7 +3,11 @@ const router = express.Router();
 const userRoutes = require("../modules/users/routes/user.routes");
 const personalInfoRoutes = require("../modules/personal_info/routes/personalInfo.routes");
 const authMiddleware = require("../middlewares/auth");
+const logger = require("../middlewares/logging");
 
+router.use(logger);
+
+// Mount users info routes
 router.use("/users", userRoutes);
 
 // Mount personal info routes
@@ -18,7 +22,7 @@ router.get("/dashboard", authMiddleware, (req, res) => {
   }
 });
 
-router.get("/me", (req, res) => {
+router.get("/me", authMiddleware, (req, res) => {
   res.json({
     id: req.user.id,
     employeeId: req.user.employeeId,
