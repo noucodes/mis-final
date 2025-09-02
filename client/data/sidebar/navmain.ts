@@ -114,93 +114,93 @@ export const HRData = {
     },
     {
       title: "Employee Management",
-      url: "/404",
+      url: "/construction",
       icon: IdCardLanyard,
       items: [
         {
           title: "List of Employees",
-          url: "/404",
+          url: "/construction",
         },
         {
           /**butangi nig dropdown boi! */ title: "Add/Edit Employee Info",
-          url: "/404",
+          url: "/construction",
         },
         {
           title: "Employment Status History",
-          url: "/404",
+          url: "/construction",
         },
       ],
     },
     {
       /**walaa ang dropdown boi! */ title: "Masterlist of Timesheet",
-      url: "/404",
+      url: "/construction",
       icon: ClipboardList,
       items: [
         {
           title: "Introduction",
-          url: "/404",
+          url: "/construction",
         },
         {
           title: "Get Started",
-          url: "/404",
+          url: "/construction",
         },
         {
           title: "Tutorials",
-          url: "/404",
+          url: "/construction",
         },
         {
           title: "Changelog",
-          url: "/404",
+          url: "/construction",
         },
       ],
     },
 
     {
       /**walaa ang dropdown boi! */ title: "Policies",
-      url: "/404",
+      url: "/construction",
       icon: CircleAlert,
     },
 
     {
       /**walaa ang dropdown boi! */ title: "HMOs",
-      url: "/404",
+      url: "/construction",
       icon: FileWarning,
     },
 
     {
       /**walaa ang dropdown boi! */ title: "COE Request",
-      url: "/404",
+      url: "/construction",
       icon: GitPullRequest,
     },
 
     {
       /**walaa ang dropdown boi! */ title: "Leave Management",
-      url: "/404",
+      url: "/construction",
       icon: FilePenLine,
       items: [
         {
           title: "Employee Leave Credits",
-          url: "/404",
+          url: "/construction",
         },
         {
           title: "Approve/Decline Leave",
-          url: "/404",
+          url: "/construction",
         },
       ],
     },
 
     {
       /**walaa ang dropdown boi! */ title: "Performance Review",
-      url: "/404",
+      url: "/construction",
       icon: Spotlight,
       items: [
         {
           title: "Employee Evaluations",
-          url: "/404",
+          url: "/construction",
         },
         {
           title: "Review Templates",
-          url: "/404",
+          url: "/construction",
         },
       ],
     },
