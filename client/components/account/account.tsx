@@ -13,6 +13,17 @@ import { Input } from "@/components/ui/input";
 import { AccountTabs } from "./account-tabs";
 import axios from "axios";
 import { useState, useEffect } from "react";
+import { toast } from "sonner";
+
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  avatar?: string;
+  role: string;
+  employeeId: string;
+  password?: string;
+}
 
 export function Account() {
   const [user, setUser] = useState<{
@@ -24,7 +35,9 @@ export function Account() {
     employeeId: string;
     password?: string;
   } | null>(null);
-
+  const [loading, setLoading] = useState<boolean>(true);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
   const [tempData, setTempData] = useState<typeof user>(null);
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -69,6 +82,37 @@ export function Account() {
       </header>
     );
   }
+
+  // // Handle form submission
+  // const handleSubmit = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   setLoading(true);
+  //   setError(null);
+
+  //   try {
+  //     const token = localStorage.getItem("token");
+  //     if (!token) {
+  //       throw new Error("No token found. Please log in.");
+  //     }
+
+  //     const response = await axios.put<User>(
+  //       `${process.env.NEXT_PUBLIC_API_URL}/personal-info/${id}`,
+  //       { ...personalInfo, user_id: id },
+  //       { headers: { Authorization: `Bearer ${token}` } }
+  //     );
+
+  //     toast.success("Personal info updated successfully!");
+  //     setUser(response.data);
+  //   } catch (err) {
+  //     const error = err as AxiosError<{ message: string }>;
+  //     console.error("Error:", error);
+  //     const errorMessage = error || "Failed to update info.";
+  //     setError(`${errorMessage}`);
+  //     toast.error(`${errorMessage}`);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   return (
     <>
@@ -171,7 +215,7 @@ export function Account() {
                       const token = localStorage.getItem("token");
                       if (!token) return;
                       await axios.put(
-                        `${process.env.NEXT_PUBLIC_API_URL}/me`,
+                        `${process.env.NEXT_PUBLIC_API_URL}/users`,
                         tempData,
                         {
                           headers: { Authorization: `Bearer ${token}` },

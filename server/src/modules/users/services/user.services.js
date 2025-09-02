@@ -136,14 +136,23 @@ class UserServices {
     }
   }
 
-  async getUserService(data) {
+  async getUsersService() {
     try {
-      const id = data;
-      const result = await pool.query("SELECT * FROM users WHERE id = $1",[id]);
+      const result = await pool.query("SELECT * FROM users");
       return result.rows;
     } catch (err) {
       console.error("❌ Error in getUsersService:", err.message);
       throw err;
+    }
+  }
+
+  async updateUsersService(data) {
+    try {
+      const id = data;
+
+      return;
+    } catch (err) {
+      console.error("Error in updateUsersService:", err.message);
     }
   }
 }
