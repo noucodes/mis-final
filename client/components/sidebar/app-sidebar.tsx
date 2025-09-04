@@ -47,7 +47,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       try {
         const token = localStorage.getItem("token");
         if (!token) { setIsAuthenticated(false); }
-        setIsAuthenticated(true);
         const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/me`, {
           headers: {
             Authorization: `bearer ${token}`,

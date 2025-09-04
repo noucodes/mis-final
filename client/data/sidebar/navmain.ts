@@ -108,7 +108,7 @@ export const HRData = {
   label: "Human Resource Management",
   items: [
     {
-      /**walaa ang dropdown boi! */ title: "Dashboard",
+      title: "Dashboard",
       url: "/dashboard",
       icon: LayoutDashboard,
     },
@@ -119,10 +119,10 @@ export const HRData = {
       items: [
         {
           title: "List of Employees",
-          url: "/construction",
+          url: "/hr/employee-management/",
         },
         {
-          /**butangi nig dropdown boi! */ title: "Add/Edit Employee Info",
+          title: "Add/Edit Employee Info",
           url: "/construction",
         },
         {
@@ -132,7 +132,7 @@ export const HRData = {
       ],
     },
     {
-      /**walaa ang dropdown boi! */ title: "Masterlist of Timesheet",
+      title: "Masterlist of Timesheet",
       url: "/construction",
       icon: ClipboardList,
       items: [
@@ -156,25 +156,25 @@ export const HRData = {
     },
 
     {
-      /**walaa ang dropdown boi! */ title: "Policies",
+      title: "Policies",
       url: "/construction",
       icon: CircleAlert,
     },
 
     {
-      /**walaa ang dropdown boi! */ title: "HMOs",
+      title: "HMOs",
       url: "/construction",
       icon: FileWarning,
     },
 
     {
-      /**walaa ang dropdown boi! */ title: "COE Request",
+      title: "COE Request",
       url: "/construction",
       icon: GitPullRequest,
     },
 
     {
-      /**walaa ang dropdown boi! */ title: "Leave Management",
+      title: "Leave Management",
       url: "/construction",
       icon: FilePenLine,
       items: [
@@ -190,7 +190,7 @@ export const HRData = {
     },
 
     {
-      /**walaa ang dropdown boi! */ title: "Performance Review",
+      title: "Performance Review",
       url: "/construction",
       icon: Spotlight,
       items: [
@@ -211,88 +211,88 @@ export const HRecruitmentData = {
   label: "Recruitment Management",
   items: [
     {
-      title: "Online Applicants /Walk-In Applicants",
-      url: "/404",
+      title: "Applicants",
+      url: "#",
       icon: IdCardLanyard,
       items: [
         {
           title: "Initial Interview",
-          url: "/404",
+          url: "#",
         },
         {
           title: "Examination",
-          url: "/404",
+          url: "#",
         },
         {
           title: "Final Interview",
-          url: "/404",
+          url: "#",
         },
         {
           title: "Job Offer",
-          url: "/404",
+          url: "#",
         },
         {
           title: "Contract Signing",
-          url: "/404",
+          url: "#",
         },
       ],
     },
 
     {
       title: "Calendar",
-      url: "/404",
+      url: "#",
       icon: IdCardLanyard,
     },
     {
       title: "Scheduling",
-      url: "/404",
+      url: "#",
       icon: IdCardLanyard,
     },
 
     {
       title: "On Boarding Process",
-      url: "/404",
+      url: "#",
       icon: IdCardLanyard,
       items: [
         {
           title: "Orientation",
-          url: "/404",
+          url: "#",
         },
         {
           title: "Google Account Creation",
-          url: "/404",
+          url: "#",
         },
         {
           title: "Time Doctor",
-          url: "/404",
+          url: "#",
         },
         {
           title: "Documents / Requirements",
-          url: "/404",
+          url: "#",
         },
         {
           title: "Asset Assignment",
-          url: "/404",
+          url: "#",
         },
       ],
     },
 
     {
       title: "Off Boarding Process",
-      url: "/404",
+      url: "#",
       icon: IdCardLanyard,
       items: [
         {
           title: "Resignation Letter",
-          url: "/404",
+          url: "#",
         },
         {
           title: "Clearance",
-          url: "/404",
+          url: "#",
         },
         {
           title: "Exit Interview",
-          url: "/404",
+          url: "#",
         },
       ],
     },

@@ -43,6 +43,12 @@ class UserServices {
         "INSERT INTO personal_info (user_id, active) VALUES ($1, $2)",
         [user_id, true]
       );
+      await pool.query("INSERT INTO employee_details (user_id) VALUES ($1)", [
+        user_id,
+      ]);
+      await pool.query("INSERT INTO contribution (user_id) VALUES ($1)", [
+        user_id,
+      ]);
 
       return { message: "✅ Registered successfully", user: result.rows[0] };
     } catch (err) {

@@ -35,9 +35,6 @@ export function Account() {
     employeeId: string;
     password?: string;
   } | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
   const [tempData, setTempData] = useState<typeof user>(null);
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -122,7 +119,7 @@ export function Account() {
             {/* Avatar */}
             <Avatar className="h-20 w-20">
               <AvatarImage
-                src={user.avatar || "/placeholder.svg"}
+                src={user.avatar}
                 alt={user.name}
               />
               <AvatarFallback className="text-2xl">
