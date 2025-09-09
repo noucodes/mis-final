@@ -1,5 +1,3 @@
-"use client"
-
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import { ModeToggle } from "@/components/toggle-mode";
 import {
@@ -17,7 +15,6 @@ import {
 import Error from "@/components/error";
 
 export default function Page() {
-
     return (
         <SidebarProvider>
             <AppSidebar />

@@ -119,7 +119,7 @@ export const HRData = {
       items: [
         {
           title: "List of Employees",
-          url: "/hr/employee-management/",
+          url: "/employee-management/list",
         },
         {
           title: "Add/Edit Employee Info",
@@ -300,89 +300,82 @@ export const HRecruitmentData = {
 };
 
 export const FinanceData = {
-  label: "",
+  label: "Accounting Management",
   items: [
     {
-      title: "Playground",
+      title: "Dashboard",
       url: "#",
       icon: SquareTerminal,
-      isActive: true,
-      items: [
-        {
-          title: "History",
-          url: "#",
-        },
-        {
-          title: "Starred",
-          url: "#",
-        },
-        {
-          title: "Settings",
-          url: "#",
-        },
-      ],
     },
     {
-      title: "Models",
+      title: "Payroll Management",
       url: "#",
       icon: Bot,
       items: [
         {
-          title: "Genesis",
+          title: "Payruns",
           url: "#",
         },
         {
-          title: "Explorer",
+          title: "Pay Computation Setups",
           url: "#",
         },
         {
-          title: "Quantum",
+          title: "Pay Items",
+          url: "#",
+        },
+        {
+          title: "Process Payroll",
+          url: "#",
+        },
+        {
+          title: "De Minimis Reference",
+          url: "#",
+        },
+        {
+          title: "Employee Last Pays",
+          url: "#",
+        },
+        {
+          title: "Disbursements",
+          url: "#",
+        },
+        {
+          title: "View Salary Summary",
+          url: "#",
+        },
+        {
+          title: "Apply Deductions (Automated)",
           url: "#",
         },
       ],
     },
     {
-      title: "Documentation",
+      title: "Tax Reports",
       url: "#",
       icon: BookOpen,
       items: [
         {
-          title: "Introduction",
+          title: "Generate BIR Forms",
           url: "#",
         },
         {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
+          title: "View Tax History",
           url: "#",
         },
       ],
     },
     {
-      title: "Settings",
+      title: "Financial Reports",
       url: "#",
       icon: Settings2,
       items: [
         {
-          title: "General",
+          title: "Employee Cost Summary",
           url: "#",
         },
         {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
+          title: "Monthly Expenses",
           url: "#",
         },
       ],

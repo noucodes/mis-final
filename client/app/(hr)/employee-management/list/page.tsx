@@ -1,5 +1,3 @@
-"use client"
-
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import { ModeToggle } from "@/components/toggle-mode";
 import {
@@ -14,21 +12,33 @@ import {
     SidebarProvider,
     SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { Account } from "@/components/account/account";
-import Error from "@/components/error";
+import { columns, Payment } from "./columns"
+import { DataTable } from "@/components/data-table"
 
-export default function Page() {
-    const router = useRouter();
+async function getData(): Promise<Payment[]> {
+    // Fetch data from your API here.
+    return [
+        {
+            employeeid: "001",
+            name: "Elton John M. Escudero",
+            position: "Jr. Web Developer",
+            teamleader: "Lea A. Samontina",
+            status: "pending",
+        },
+        {
+            employeeid: "002",
+            name: "Elton Rey Ybanez",
+            position: "Jr. Web Developer",
+            teamleader: "Lea A. Samontina",
+            status: "pending",
+        },
+        // ...
+    ]
+}
 
-    useEffect(() => {
-        const token = localStorage.getItem("token");
-        if (!token) {
-            router.push("/login");
-        }
-    }, []);
 
+export default async function Page() {
+    const data = await getData()
     return (
         <SidebarProvider>
             <AppSidebar />
@@ -51,7 +61,7 @@ export default function Page() {
                     <ModeToggle />
                 </header>
                 <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-                    <Error />
+                    <DataTable columns={columns} data={data} />
                 </div>
             </SidebarInset>
         </SidebarProvider>

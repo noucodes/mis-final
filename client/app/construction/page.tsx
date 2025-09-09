@@ -1,5 +1,3 @@
-"use client"
-
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import { ModeToggle } from "@/components/toggle-mode";
 import {
@@ -14,21 +12,9 @@ import {
     SidebarProvider,
     SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { Account } from "@/components/account/account";
-import Error from "@/components/error";
 import Construction from "@/components/construction";
 
 export default function Page() {
-    const router = useRouter();
-
-    useEffect(() => {
-        const token = localStorage.getItem("token");
-        if (!token) {
-            router.push("/login");
-        }
-    }, []);
 
     return (
         <SidebarProvider>

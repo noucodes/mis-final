@@ -23,9 +23,10 @@ import axios from "axios";
 import { roleLabels } from "@/lib/roleLabels";
 import { Skeleton } from "../ui/skeleton";
 import { toast, Toaster } from "sonner";
-import router from "next/router";
+import { useRouter } from "next/navigation";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const router = useRouter();
   const [user, setUser] = useState<{
     name: string;
     email: string;
@@ -46,7 +47,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const fetchUser = async () => {
       try {
         const token = localStorage.getItem("token");
-        if (!token) { setIsAuthenticated(false); }
+        if (!token) { handleLogout(); }
         const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/me`, {
           headers: {
             Authorization: `bearer ${token}`,

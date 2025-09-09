@@ -13,7 +13,7 @@ import { toast } from "sonner";
 
 // Interface aligned with backend schema
 interface PersonalInfo {
-  id: number;
+  id: string;
   active: boolean;
   birth_date: string;
   address?: string;
@@ -23,10 +23,31 @@ interface PersonalInfo {
   user_id: number;
 }
 
+interface EmployeeDetails {
+  id: number;
+  user_id: string; // UUID
+  position: string; // since it's VARCHAR(45)[], we can use string[] if you want multiple positions
+  job_level: string;
+  payment_method: string;
+  pay_computation: string;
+  salary_type: string;
+  basic_pay: number;
+  allowance: number;
+  gross: number;
+  bank_number: string;
+  salary_grade: string;
+  date_hired: string; // YYYY-MM-DD
+  employee_activity: string;
+  activity_effect_date: string; // YYYY-MM-DD
+  remarks: string;
+  department: string;
+  manager: string;
+  employee_status: string;
+}
+
 export function AccountTabs({ id }: { id: number }) {
-  const router = useRouter();
   const [personalInfo, setPersonalInfo] = useState<PersonalInfo>({
-    id: 0,
+    id: "",
     active: true,
     birth_date: "",
     address: "",
@@ -35,20 +56,31 @@ export function AccountTabs({ id }: { id: number }) {
     emergency_contact_number: "",
     user_id: id,
   });
-  const [loading, setLoading] = useState<boolean>(true);
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
 
-  // Check authentication and fetch data on mount
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      router.push("/login");
-    } else {
-      setIsAuthenticated(true);
-      fetchPersonalInfo(token);
-    }
-  }, [router]);
+  const [employee, setEmployee] = useState<EmployeeDetails>({
+    id: 0,
+    user_id: "", // you can pass a generated UUID if needed
+    position: "", // or [] if you want multiple values
+    job_level: "",
+    payment_method: "",
+    pay_computation: "",
+    salary_type: "",
+    basic_pay: 0,
+    allowance: 0,
+    gross: 0,
+    bank_number: "",
+    salary_grade: "",
+    date_hired: "",
+    employee_activity: "",
+    activity_effect_date: "",
+    remarks: "",
+    department: "",
+    manager: "",
+    employee_status: "Active", // default maybe
+  })
+
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   // Fetch personal info
   const fetchPersonalInfo = async (token: string) => {
@@ -68,14 +100,23 @@ export function AccountTabs({ id }: { id: number }) {
     }
   };
 
-  // Handle input changes
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePersonalChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setPersonalInfo((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleEmployeeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    // Convert numbers properly
+    const newValue =
+      e.target.type === "number" ? (value === "" ? 0 : parseFloat(value)) : value;
+
+    setEmployee((prev) => ({ ...prev, [name]: newValue }));
+  };
+
   // Handle form submission
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handlePersonalInfoSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
@@ -112,9 +153,33 @@ export function AccountTabs({ id }: { id: number }) {
     }
   };
 
+  const handleEmployeeSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
 
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("No token found. Please log in.");
+
+      const response = await axios.put<EmployeeDetails>(
+        `${process.env.NEXT_PUBLIC_API_URL}/employee-details/${id}`,
+        { ...employee, user_id: id }, // make sure backend expects this
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      toast.success("Employee details updated successfully!");
+      setEmployee(response.data);
+    } catch (err) {
+      const error = err as AxiosError<{ message: string }>;
+      console.error("Error:", error);
+      toast.error(error.response?.data?.message || "Failed to update employee info.");
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
-    <main className="flex-1 overflow-auto p-6">
+    <main className="flex-1 overflow-auto p-6" >
       <Tabs defaultValue="personal" className="w-full">
         <TabsList className="grid w-2/5 grid-cols-3">
           <TabsTrigger value="personal">Personal Info</TabsTrigger>
@@ -128,9 +193,9 @@ export function AccountTabs({ id }: { id: number }) {
             <CardHeader>
               <CardTitle>Personal Information</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent >
               {error && <p className="text-red-500">{error}</p>}
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={handlePersonalInfoSubmit} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="birth_date">Date of Birth</Label>
@@ -140,7 +205,7 @@ export function AccountTabs({ id }: { id: number }) {
                       type="date"
                       placeholder="1990-01-15"
                       value={personalInfo.birth_date}
-                      onChange={handleChange}
+                      onChange={handlePersonalChange}
                       required
                     />
                   </div>
@@ -151,7 +216,7 @@ export function AccountTabs({ id }: { id: number }) {
                       name="address"
                       placeholder="123 Main St, City, State 12345"
                       value={personalInfo.address || ""}
-                      onChange={handleChange}
+                      onChange={handlePersonalChange}
                     />
                   </div>
                 </div>
@@ -163,7 +228,7 @@ export function AccountTabs({ id }: { id: number }) {
                       name="phone_number"
                       placeholder="+1 (555) 123-4567"
                       value={personalInfo.phone_number || ""}
-                      onChange={handleChange}
+                      onChange={handlePersonalChange}
                     />
                   </div>
                   <div className="space-y-2">
@@ -173,7 +238,7 @@ export function AccountTabs({ id }: { id: number }) {
                       name="emergency_contact_person"
                       placeholder="Jane Doe"
                       value={personalInfo.emergency_contact_person || ""}
-                      onChange={handleChange}
+                      onChange={handlePersonalChange}
                     />
                   </div>
                 </div>
@@ -185,7 +250,7 @@ export function AccountTabs({ id }: { id: number }) {
                       name="emergency_contact_number"
                       placeholder="+64 9876543210"
                       value={personalInfo.emergency_contact_number || ""}
-                      onChange={handleChange}
+                      onChange={handlePersonalChange}
                     />
                   </div>
                   <div className="space-y-2">
@@ -210,71 +275,235 @@ export function AccountTabs({ id }: { id: number }) {
           </Card>
         </TabsContent>
 
-        {/* EMPLOYEE INFO (Placeholder) */}
         <TabsContent value="employee" className="mt-6">
           <Card>
             <CardHeader>
-              <CardTitle>Employee Information</CardTitle>
+              <CardTitle>Employee Details</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="position">Position</Label>
-                  <Input id="position" defaultValue="Senior Developer" />
+            <CardContent>
+              {error && <p className="text-red-500">{error}</p>}
+              <form onSubmit={handleEmployeeSubmit} className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="user_id">User ID</Label>
+                    <Input
+                      id="user_id"
+                      name="user_id"
+                      placeholder="UUID"
+                      value={employee.user_id || ""}
+                      onChange={handleEmployeeChange}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="position">Position</Label>
+                    <Input
+                      id="position"
+                      name="position"
+                      placeholder="Manager, Developer"
+                      value={employee.position || ""}
+                      onChange={handleEmployeeChange}
+                    />
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="department">Department</Label>
-                  <Input id="department" defaultValue="Engineering" />
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="job_level">Job Level</Label>
+                    <Input
+                      id="job_level"
+                      name="job_level"
+                      placeholder="Junior / Mid / Senior"
+                      value={employee.job_level || ""}
+                      onChange={handleEmployeeChange}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="payment_method">Payment Method</Label>
+                    <Input
+                      id="payment_method"
+                      name="payment_method"
+                      placeholder="Bank Transfer / Cash"
+                      value={employee.payment_method || ""}
+                      onChange={handleEmployeeChange}
+                    />
+                  </div>
                 </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="position">Position</Label>
-                  <Input id="position" defaultValue="Senior Developer" />
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="pay_computation">Pay Computation</Label>
+                    <Input
+                      id="pay_computation"
+                      name="pay_computation"
+                      placeholder="Hourly / Monthly"
+                      value={employee.pay_computation || ""}
+                      onChange={handleEmployeeChange}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="salary_type">Salary Type</Label>
+                    <Input
+                      id="salary_type"
+                      name="salary_type"
+                      placeholder="Fixed / Variable"
+                      value={employee.salary_type || ""}
+                      onChange={handleEmployeeChange}
+                    />
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="department">Department</Label>
-                  <Input id="department" defaultValue="Engineering" />
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="basic_pay">Basic Pay</Label>
+                    <Input
+                      id="basic_pay"
+                      name="basic_pay"
+                      type="number"
+                      step="0.01"
+                      placeholder="50000"
+                      value={employee.basic_pay || ""}
+                      onChange={handleEmployeeChange}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="allowance">Allowance</Label>
+                    <Input
+                      id="allowance"
+                      name="allowance"
+                      type="number"
+                      step="0.01"
+                      placeholder="5000"
+                      value={employee.allowance || ""}
+                      onChange={handleEmployeeChange}
+                    />
+                  </div>
                 </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="position">Position</Label>
-                  <Input id="position" defaultValue="Senior Developer" />
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="gross">Gross</Label>
+                    <Input
+                      id="gross"
+                      name="gross"
+                      type="number"
+                      step="0.01"
+                      placeholder="55000"
+                      value={employee.gross || ""}
+                      onChange={handleEmployeeChange}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="bank_number">Bank Number</Label>
+                    <Input
+                      id="bank_number"
+                      name="bank_number"
+                      placeholder="1234-5678-90"
+                      value={employee.bank_number || ""}
+                      onChange={handleEmployeeChange}
+                    />
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="department">Department</Label>
-                  <Input id="department" defaultValue="Engineering" />
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="salary_grade">Salary Grade</Label>
+                    <Input
+                      id="salary_grade"
+                      name="salary_grade"
+                      placeholder="SG-15"
+                      value={employee.salary_grade || ""}
+                      onChange={handleEmployeeChange}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="date_hired">Date Hired</Label>
+                    <Input
+                      id="date_hired"
+                      name="date_hired"
+                      type="date"
+                      value={employee.date_hired || ""}
+                      onChange={handleEmployeeChange}
+                    />
+                  </div>
                 </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="position">Position</Label>
-                  <Input id="position" defaultValue="Senior Developer" />
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="employee_activity">Employee Activity</Label>
+                    <Input
+                      id="employee_activity"
+                      name="employee_activity"
+                      placeholder="Onboarding / Training"
+                      value={employee.employee_activity || ""}
+                      onChange={handleEmployeeChange}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="activity_effect_date">Activity Effect Date</Label>
+                    <Input
+                      id="activity_effect_date"
+                      name="activity_effect_date"
+                      type="date"
+                      value={employee.activity_effect_date || ""}
+                      onChange={handleEmployeeChange}
+                    />
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="department">Department</Label>
-                  <Input id="department" defaultValue="Engineering" />
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="remarks">Remarks</Label>
+                    <Input
+                      id="remarks"
+                      name="remarks"
+                      placeholder="Optional notes"
+                      value={employee.remarks || ""}
+                      onChange={handleEmployeeChange}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="department">Department</Label>
+                    <Input
+                      id="department"
+                      name="department"
+                      placeholder="HR / IT / Finance"
+                      value={employee.department || ""}
+                      onChange={handleEmployeeChange}
+                    />
+                  </div>
                 </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="manager">Manager</Label>
-                  <Input id="manager" defaultValue="Jane Smith" />
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="manager">Manager</Label>
+                    <Input
+                      id="manager"
+                      name="manager"
+                      placeholder="John Smith"
+                      value={employee.manager || ""}
+                      onChange={handleEmployeeChange}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="employee_status">Employee Status</Label>
+                    <Input
+                      id="employee_status"
+                      name="employee_status"
+                      placeholder="Active / Inactive"
+                      value={employee.employee_status || ""}
+                      onChange={handleEmployeeChange}
+                    />
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="startDate">Start Date</Label>
-                  <Input id="startDate" type="date" defaultValue="2022-03-01" />
+
+                <div className="w-full flex justify-center mt-4">
+                  <Button type="submit" className="w-full" disabled={loading}>
+                    <Save className="mr-2 h-4 w-4" />
+                    {loading ? "Saving..." : "Save"}
+                  </Button>
                 </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="salary">Annual Salary</Label>
-                <Input id="salary" defaultValue="$85,000" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="workLocation">Work Location</Label>
-                <Input id="workLocation" defaultValue="Remote" />
-              </div>
+              </form>
             </CardContent>
           </Card>
         </TabsContent>
@@ -285,7 +514,7 @@ export function AccountTabs({ id }: { id: number }) {
             <CardHeader>
               <CardTitle>Contribution & Benefits</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="retirement401k">401(k) Contribution</Label>
@@ -318,6 +547,6 @@ export function AccountTabs({ id }: { id: number }) {
           </Card>
         </TabsContent>
       </Tabs>
-    </main>
+    </main >
   );
 }
