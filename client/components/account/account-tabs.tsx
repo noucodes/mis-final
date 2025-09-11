@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -13,14 +12,14 @@ import { toast } from "sonner";
 
 // Interface aligned with backend schema
 interface PersonalInfo {
-  id: string;
+  id: number;
   active: boolean;
   birth_date: string;
   address?: string;
   phone_number?: string;
   emergency_contact_person?: string;
   emergency_contact_number?: string;
-  user_id: number;
+  user_id: string;
 }
 
 interface EmployeeDetails {
@@ -47,14 +46,14 @@ interface EmployeeDetails {
 
 export function AccountTabs({ id }: { id: number }) {
   const [personalInfo, setPersonalInfo] = useState<PersonalInfo>({
-    id: "",
+    id: 0,
     active: true,
     birth_date: "",
     address: "",
     phone_number: "",
     emergency_contact_person: "",
     emergency_contact_number: "",
-    user_id: id,
+    user_id: "",
   });
 
   const [employee, setEmployee] = useState<EmployeeDetails>({
@@ -79,17 +78,27 @@ export function AccountTabs({ id }: { id: number }) {
     employee_status: "Active", // default maybe
   })
 
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [token, setToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    if (storedToken) {
+      setToken(storedToken);
+    } else {
+      toast.error("No token found. Please log in.");
+    }
+  }, []);
 
   // Fetch personal info
   const fetchPersonalInfo = async (token: string) => {
     try {
-      const response = await axios.get<PersonalInfo>(
+      const personalResponse = await axios.get<PersonalInfo>(
         `${process.env.NEXT_PUBLIC_API_URL}/personal-info/${id}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setPersonalInfo(response.data);
+      setPersonalInfo(personalResponse.data);
     } catch (err) {
       const error = err as AxiosError<{ message: string }>;
       console.error("Fetch error:", error);
@@ -99,6 +108,32 @@ export function AccountTabs({ id }: { id: number }) {
       setLoading(false);
     }
   };
+
+  // Fetch personal info
+  const fetchEmployeeDetails = async (token: string) => {
+    try {
+      const employeeResponse = await axios.get<EmployeeDetails>(
+        `${process.env.NEXT_PUBLIC_API_URL}/employee-details/${id}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setEmployee(employeeResponse.data);
+    } catch (err) {
+      const error = err as AxiosError<{ message: string }>;
+      console.error("Fetch error:", error);
+      toast.info("No employee details found, please fill out the form");
+      // Keep default state
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (token) {
+      fetchPersonalInfo(token);
+      fetchEmployeeDetails(token);
+    }
+  }, [token]);
+
 
   const handlePersonalChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -129,11 +164,6 @@ export function AccountTabs({ id }: { id: number }) {
     }
 
     try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        throw new Error("No token found. Please log in.");
-      }
-
       const response = await axios.put<PersonalInfo>(
         `${process.env.NEXT_PUBLIC_API_URL}/personal-info/${id}`,
         { ...personalInfo, user_id: id },
@@ -145,9 +175,10 @@ export function AccountTabs({ id }: { id: number }) {
     } catch (err) {
       const error = err as AxiosError<{ message: string }>;
       console.error("Error:", error);
-      const errorMessage = error || "Failed to update info.";
-      setError(`${errorMessage}`);
-      toast.error(`${errorMessage}`);
+      const errorMessage =
+        error.response?.data?.message || error.message || "Failed to update info.";
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -159,9 +190,6 @@ export function AccountTabs({ id }: { id: number }) {
     setError(null);
 
     try {
-      const token = localStorage.getItem("token");
-      if (!token) throw new Error("No token found. Please log in.");
-
       const response = await axios.put<EmployeeDetails>(
         `${process.env.NEXT_PUBLIC_API_URL}/employee-details/${id}`,
         { ...employee, user_id: id }, // make sure backend expects this
@@ -173,7 +201,10 @@ export function AccountTabs({ id }: { id: number }) {
     } catch (err) {
       const error = err as AxiosError<{ message: string }>;
       console.error("Error:", error);
-      toast.error(error.response?.data?.message || "Failed to update employee info.");
+      const errorMessage =
+        error.response?.data?.message || error.message || "Failed to update info.";
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -285,14 +316,13 @@ export function AccountTabs({ id }: { id: number }) {
               <form onSubmit={handleEmployeeSubmit} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="user_id">User ID</Label>
+                    <Label htmlFor="employee_status">Employee Status</Label>
                     <Input
-                      id="user_id"
-                      name="user_id"
-                      placeholder="UUID"
-                      value={employee.user_id || ""}
+                      id="employee_status"
+                      name="employee_status"
+                      placeholder="Active / Inactive"
+                      value={employee.employee_status || ""}
                       onChange={handleEmployeeChange}
-                      required
                     />
                   </div>
                   <div className="space-y-2">
@@ -362,7 +392,7 @@ export function AccountTabs({ id }: { id: number }) {
                       type="number"
                       step="0.01"
                       placeholder="50000"
-                      value={employee.basic_pay || ""}
+                      value={employee.basic_pay || 0}
                       onChange={handleEmployeeChange}
                     />
                   </div>
@@ -374,7 +404,7 @@ export function AccountTabs({ id }: { id: number }) {
                       type="number"
                       step="0.01"
                       placeholder="5000"
-                      value={employee.allowance || ""}
+                      value={employee.basic_pay || 0}
                       onChange={handleEmployeeChange}
                     />
                   </div>
@@ -389,7 +419,7 @@ export function AccountTabs({ id }: { id: number }) {
                       type="number"
                       step="0.01"
                       placeholder="55000"
-                      value={employee.gross || ""}
+                      value={employee.basic_pay || 0}
                       onChange={handleEmployeeChange}
                     />
                   </div>
@@ -482,16 +512,6 @@ export function AccountTabs({ id }: { id: number }) {
                       name="manager"
                       placeholder="John Smith"
                       value={employee.manager || ""}
-                      onChange={handleEmployeeChange}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="employee_status">Employee Status</Label>
-                    <Input
-                      id="employee_status"
-                      name="employee_status"
-                      placeholder="Active / Inactive"
-                      value={employee.employee_status || ""}
                       onChange={handleEmployeeChange}
                     />
                   </div>

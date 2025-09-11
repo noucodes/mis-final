@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const userRoutes = require("../modules/users/routes/user.routes");
 const personalInfoRoutes = require("../modules/personal_info/routes/personalInfo.routes");
+const employeeDetailsRoutes = require("../modules/employee_details/routes/employeeDetails.route");
 const authMiddleware = require("../middlewares/auth");
 const logger = require("../middlewares/logging");
 
@@ -12,6 +13,8 @@ router.use("/users", userRoutes);
 
 // Mount personal info routes
 router.use("/personal-info", personalInfoRoutes); // New route mounting
+
+router.use("/employee-details", employeeDetailsRoutes); // New route mounting
 
 // Protected dashboard route
 router.get("/dashboard", authMiddleware, (req, res) => {
