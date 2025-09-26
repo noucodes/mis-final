@@ -11,9 +11,13 @@ import {
   GitPullRequest,
   FilePenLine,
   Spotlight,
+  SquareUserRound,
+  CalendarDays,
+  CalendarCheck,
+  Layers,
 } from "lucide-react";
 
-export const navMainData = {
+export const UserData = {
   label: "User Management",
   items: [
     {
@@ -133,34 +137,14 @@ export const HRData = {
     },
     {
       title: "Masterlist of Timesheet",
-      url: "/construction",
+      url: "/dashboard",
       icon: ClipboardList,
-      items: [
-        {
-          title: "Introduction",
-          url: "/construction",
-        },
-        {
-          title: "Get Started",
-          url: "/construction",
-        },
-        {
-          title: "Tutorials",
-          url: "/construction",
-        },
-        {
-          title: "Changelog",
-          url: "/construction",
-        },
-      ],
     },
-
     {
       title: "Policies",
       url: "/construction",
       icon: CircleAlert,
     },
-
     {
       title: "HMOs",
       url: "/construction",
@@ -213,8 +197,12 @@ export const HRecruitmentData = {
     {
       title: "Applicants",
       url: "#",
-      icon: IdCardLanyard,
+      icon: SquareUserRound,
       items: [
+        {
+          title: "Dashboard",
+          url: "#",
+        },
         {
           title: "Initial Interview",
           url: "#",
@@ -241,18 +229,18 @@ export const HRecruitmentData = {
     {
       title: "Calendar",
       url: "#",
-      icon: IdCardLanyard,
+      icon:CalendarDays,
     },
     {
       title: "Scheduling",
       url: "#",
-      icon: IdCardLanyard,
+      icon: CalendarCheck,
     },
 
     {
       title: "On Boarding Process",
       url: "#",
-      icon: IdCardLanyard,
+      icon: Layers,
       items: [
         {
           title: "Orientation",
@@ -280,7 +268,7 @@ export const HRecruitmentData = {
     {
       title: "Off Boarding Process",
       url: "#",
-      icon: IdCardLanyard,
+      icon: Layers,
       items: [
         {
           title: "Resignation Letter",

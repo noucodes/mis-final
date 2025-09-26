@@ -17,7 +17,7 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { navMainData, HRData, FinanceData, HRecruitmentData } from "@/data/sidebar/navmain";
+import { UserData, HRData, FinanceData, HRecruitmentData } from "@/data/sidebar/navmain";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { roleLabels } from "@/lib/roleLabels";
@@ -100,7 +100,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         {user && user.role ? (
           user.role === 'hr' ? <><NavMain data={HRData} /><NavMain data={HRecruitmentData} /></> :
             user.role === 'finance' ? <NavMain data={FinanceData} /> :
-              <NavMain data={navMainData} />
+              <NavMain data={UserData} />
         ) : null}
       </SidebarContent>
       <SidebarFooter>
