@@ -122,8 +122,8 @@ export const HRData = {
           url: "/employee-management/list",
         },
         {
-          title: "Add/Edit Employee Info",
-          url: "/construction",
+          title: "Add Employee Info",
+          url: "/employee-management/info",
         },
         {
           title: "Employment Status History",

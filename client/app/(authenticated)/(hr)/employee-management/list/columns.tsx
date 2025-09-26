@@ -12,16 +12,17 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { Badge } from "@/components/ui/badge"
 
-export type Payment = {
+export type Employee = {
     employeeid: string
     name: string
     position: string
-    status: "pending" | "processing" | "success" | "failed"
+    status: "active" | "pending" | "resigned"
     teamleader: string
 }
 
-export const columns: ColumnDef<Payment>[] = [
+export const columns: ColumnDef<Employee>[] = [
     {
         accessorKey: "employeeid",
         header: "Employee Id",
@@ -43,6 +44,10 @@ export const columns: ColumnDef<Payment>[] = [
     {
         accessorKey: "position",
         header: "Position",
+        cell: ({ row }) => {
+            const position = row.getValue("position") as string
+            return <Badge>{position}</Badge>
+        }
     },
     {
         accessorKey: "teamleader",
@@ -51,6 +56,24 @@ export const columns: ColumnDef<Payment>[] = [
     {
         accessorKey: "status",
         header: "Status",
+        cell: ({ row }) => {
+            const status = row.getValue("status") as Employee["status"]
+            return (
+                <Badge
+                    variant={
+                        status === "active"
+                            ? "default"
+                            : status === "resigned"
+                                ? "destructive"
+                                : "secondary"
+                    } className={status === "active"
+                        ? "bg-green-500"
+                        : ""}
+                >
+                    {status}
+                </Badge>
+            )
+        },
     },
     {
         id: "actions",
